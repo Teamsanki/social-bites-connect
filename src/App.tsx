@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import SplashScreen from "./components/SplashScreen";
 import AuthPage from "./components/AuthPage";
+import MainLayout from "./components/MainLayout";
 
 const queryClient = new QueryClient();
 
@@ -32,11 +33,7 @@ const App = () => {
         ) : !isAuthenticated ? (
           <AuthPage onAuth={handleAuth} />
         ) : (
-          <div className="min-h-screen bg-gray-50">
-            <h1 className="text-2xl font-bold text-center py-8">
-              Welcome to Social Bites
-            </h1>
-          </div>
+          <MainLayout />
         )}
       </TooltipProvider>
     </QueryClientProvider>
