@@ -4,12 +4,14 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCWfoNPl2TQke0v9YuBSWJxQRU9PWvvVXo",
+  authDomain: "social-bite-skofficial.firebaseapp.com",
+  databaseURL: "https://social-bite-skofficial-default-rtdb.firebaseio.com",
+  projectId: "social-bite-skofficial",
+  storageBucket: "social-bite-skofficial.appspot.com",
+  messagingSenderId: "239722707022",
+  appId: "1:239722707022:web:57d9b173f2163e85be2b1f",
+  measurementId: "G-EJE8L74022"
 };
 
 const app = initializeApp(firebaseConfig);
