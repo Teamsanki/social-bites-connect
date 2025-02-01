@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,7 +11,7 @@ import MainLayout from "./components/MainLayout";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,6 @@ const App = () => {
   };
 
   const handleAuth = (username: string, name: string) => {
-    // Firebase auth will be handled in AuthPage component
     console.log("Auth with:", username, name);
   };
 
@@ -53,6 +52,6 @@ const App = () => {
       </TooltipProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
