@@ -4,12 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 import { Mail, Lock, User } from "lucide-react";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AuthPageProps {
   onAuth: (username: string, name: string) => void;
 }
 
 const AuthPage = ({ onAuth }: AuthPageProps) => {
+  const { toast } = useToast();
+  
   // Signup state
   const [signupUsername, setSignupUsername] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
@@ -17,28 +22,77 @@ const AuthPage = ({ onAuth }: AuthPageProps) => {
   const [signupName, setSignupName] = useState("");
   
   // Login state
-  const [loginUsername, setLoginUsername] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!signupUsername || !signupEmail || !signupPassword || !signupName) {
-      setError("Please fill in all fields");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please fill in all fields",
+      });
       return;
     }
-    // Will integrate Firebase auth later
-    onAuth(signupUsername, signupName);
+
+    try {
+      setLoading(true);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        signupEmail,
+        signupPassword
+      );
+
+      await updateProfile(userCredential.user, {
+        displayName: signupName,
+      });
+
+      toast({
+        title: "Account created",
+        description: "Welcome to Social Bites!",
+      });
+      
+      onAuth(signupUsername, signupName);
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!loginUsername || !loginPassword) {
-      setError("Please fill in all fields");
+    if (!loginEmail || !loginPassword) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please fill in all fields",
+      });
       return;
     }
-    // Will integrate Firebase auth later
-    onAuth(loginUsername, loginUsername);
+
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      toast({
+        title: "Welcome back!",
+        description: "Successfully logged in",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,12 +116,12 @@ const AuthPage = ({ onAuth }: AuthPageProps) => {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    type="text"
-                    placeholder="Username"
-                    value={loginUsername}
-                    onChange={(e) => setLoginUsername(e.target.value)}
+                    type="email"
+                    placeholder="Email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
                     className="pl-10"
                   />
                 </div>
@@ -82,9 +136,8 @@ const AuthPage = ({ onAuth }: AuthPageProps) => {
                   />
                 </div>
               </div>
-              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Loading..." : "Login"}
               </Button>
             </form>
           </TabsContent>
@@ -133,9 +186,8 @@ const AuthPage = ({ onAuth }: AuthPageProps) => {
                   />
                 </div>
               </div>
-              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
           </TabsContent>
